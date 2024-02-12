@@ -1,0 +1,362 @@
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  FlatList,
+  ScrollView,
+} from 'react-native';
+import {Colors} from '../theme/theme';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useNavigation} from '@react-navigation/native';
+import DrawerMenuCustom from '../component/DrawerMenuCustom';
+import BottomTabMenuCustom from '../component/BottomTabMenuCustom';
+import NavbarCustom from '../component/NavbarCustom';
+import ButtonGeneral from '../component/ButtonGeneral';
+import {RFValue} from 'react-native-responsive-fontsize';
+import CheckBox from '@react-native-community/checkbox';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  aggiuntaServizioActionCreator,
+  rimuoviServizioActionCreator,
+} from '../redux/actionCreator';
+
+const SceltaServizio = () => {
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const serviziSelezionati = useSelector(state => state.aggiuntaServizioReducer.data_servizio);
+
+  const data_servizio_colori = [
+    {id: '1', nome_servizio: 'Color Touch', durata: '75', prezzo: '45'},
+    {id: '2', nome_servizio: 'Colore Extra Lungo', durata: '80', prezzo: '75'},
+    {id: '3', nome_servizio: 'Colore Lungo', durata: '60', prezzo: '55'},
+    {id: '4', nome_servizio: 'Colore Corto', durata: '60', prezzo: '55'},
+    {id: '5', nome_servizio: 'Colore Ritocco', durata: '60', prezzo: '55'},
+    {id: '6', nome_servizio: 'Colpi Di Sole', durata: '90', prezzo: '35'},
+  ];
+  const data_servizio_makeUp = [
+    {id: '7', nome_servizio: 'Trucco', durata: '30', prezzo: '15'},
+    {id: '8', nome_servizio: 'Trucco Sposa', durata: '120', prezzo: '150'},
+  ];
+  const data_servizio_pieghe = [
+    {id: '9', nome_servizio: 'Piega', durata: '45', prezzo: '25'},
+    {id: '10', nome_servizio: 'Piega Lunga', durata: '30', prezzo: '30'},
+    {id: '11', nome_servizio: 'Piega Stylist', durata: '30', prezzo: '35'},
+  ];
+  const data_servizio_tagli = [
+    {id: '12', nome_servizio: 'Kit Taglio Piega', durata: '60', prezzo: '45'},
+    {id: '13', nome_servizio: 'Taglio Bimbo', durata: '30', prezzo: '15'},
+    {id: '14', nome_servizio: 'Taglio Donna', durata: '30', prezzo: '30'},
+    {id: '15', nome_servizio: 'Taglio Stylist', durata: '30', prezzo: '40'},
+    {id: '16', nome_servizio: 'Taglio Uomo', durata: '30', prezzo: '20'},
+  ];
+  const data_servizio_beauty = [
+    {id: '17', nome_servizio: 'Manicure', durata: '30', prezzo: '30'},
+    {id: '18', nome_servizio: 'Pedicure', durata: '30', prezzo: '30'},
+    {id: '19', nome_servizio: 'Gel', durata: '15', prezzo: '15'},
+    {id: '30', nome_servizio: 'Ricostruzione', durata: '60', prezzo: '50'},
+  ];
+
+  const [openModalColori, setOpenModalColori] = useState(false);
+  const [openModalMakeUp, setOpenModalMakeUp] = useState(false);
+  const [openModalPieghe, setOpenModalPieghe] = useState(false);
+  const [openModalTagli, setOpenModalTagli] = useState(false);
+  const [openModalBeauty, setOpenModalBeauty] = useState(false);
+
+  //funzione per aggiungere un servizio o rimuoverlo
+  function checkBoxSelection(item) {
+    // Controlla se l'elemento è già presente nell'array serviziSelezionati
+    const isSelected = serviziSelezionati.some(
+      servizio => servizio.id === item.id,
+    );
+
+    // Se l'elemento è già selezionato, invia l'azione per rimuoverlo, altrimenti invia l'azione per aggiungerlo
+    if (isSelected) {
+      dispatch(rimuoviServizioActionCreator(item));
+    } else {
+      dispatch(aggiuntaServizioActionCreator(item));
+    }
+  }
+  console.log(serviziSelezionati);
+
+  return (
+    <>
+      <DrawerMenuCustom />
+      <NavbarCustom pageTitol={'Scegli Servizio'} />
+      <View>
+        <ScrollView style={styles.ScrolViewCont}>
+          <View style={styles.viewTouch}>
+            <TouchableOpacity
+              onPress={() => setOpenModalColori(!openModalColori)}>
+              <View>
+                <Text style={styles.txtStyle}>Colori</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          {openModalColori ? (
+            <View style={styles.contFlatServizi}>
+              <FlatList
+                data={data_servizio_colori}
+                scrollEnabled={false}
+                keyExtractor={item => item.id}
+                showsVerticalScrollIndicator={false}
+                renderItem={({item}) => {
+                  return (
+                    <View style={styles.viewConTxt}>
+                      <CheckBox
+                        style={styles.checkBoxCustom}
+                        disabled={false}
+                        boxType="circle"
+                        value={serviziSelezionati.some(
+                          servizio => servizio.id === item.id,
+                        )} //some restituisce true o false a seconda che l'elemento sia stato trovato o meno
+                        onValueChange={() => checkBoxSelection(item)}
+                      />
+                      <View>
+                        <Text style={styles.txtTitleServ}>
+                          {item.nome_servizio}
+                        </Text>
+                        <Text style={styles.txtPriceTemp}>
+                          {item.prezzo}€ - {item.durata}min
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                }}
+              />
+            </View>
+          ) : null}
+          <View style={styles.viewTouch}>
+            <TouchableOpacity
+              onPress={() => setOpenModalMakeUp(!openModalMakeUp)}>
+              <View>
+                <Text style={styles.txtStyle}>Make Up</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          {openModalMakeUp ? (
+            <View style={styles.contFlatServizi}>
+              <FlatList
+                data={data_servizio_makeUp}
+                scrollEnabled={false}
+                keyExtractor={item => item.id}
+                showsVerticalScrollIndicator={false}
+                renderItem={({item}) => {
+                  return (
+                    <View style={styles.viewConTxt}>
+                      <CheckBox
+                        style={styles.checkBoxCustom}
+                        disabled={false}
+                        boxType="circle"
+                        value={serviziSelezionati.some(
+                          servizio => servizio.id === item.id,
+                        )} //some restituisce true o false a seconda che l'elemento sia stato trovato o meno
+                        onValueChange={() => checkBoxSelection(item)}
+                      />
+                      <View>
+                        <Text style={styles.txtTitleServ}>
+                          {item.nome_servizio}
+                        </Text>
+                        <Text style={styles.txtPriceTemp}>
+                          {item.prezzo}€ - {item.durata}min
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                }}
+              />
+            </View>
+          ) : null}
+          <View style={styles.viewTouch}>
+            <TouchableOpacity
+              onPress={() => setOpenModalPieghe(!openModalPieghe)}>
+              <View>
+                <Text style={styles.txtStyle}>Pieghe</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          {openModalPieghe ? (
+            <View style={styles.contFlatServizi}>
+              <FlatList
+                data={data_servizio_pieghe}
+                scrollEnabled={false}
+                keyExtractor={item => item.id}
+                showsVerticalScrollIndicator={false}
+                renderItem={({item}) => {
+                  return (
+                    <View style={styles.viewConTxt}>
+                      <CheckBox
+                        style={styles.checkBoxCustom}
+                        disabled={false}
+                        boxType="circle"
+                        value={serviziSelezionati.some(
+                          servizio => servizio.id === item.id,
+                        )} //some restituisce true o false a seconda che l'elemento sia stato trovato o meno
+                        onValueChange={() => checkBoxSelection(item)}
+                      />
+                      <View>
+                        <Text style={styles.txtTitleServ}>
+                          {item.nome_servizio}
+                        </Text>
+                        <Text style={styles.txtPriceTemp}>
+                          {item.prezzo}€ - {item.durata}min
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                }}
+              />
+            </View>
+          ) : null}
+          <View style={styles.viewTouch}>
+            <TouchableOpacity
+              onPress={() => setOpenModalTagli(!openModalTagli)}>
+              <View>
+                <Text style={styles.txtStyle}>Tagli</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          {openModalTagli ? (
+            <View style={styles.contFlatServizi}>
+              <FlatList
+                data={data_servizio_tagli}
+                scrollEnabled={false}
+                keyExtractor={item => item.id}
+                showsVerticalScrollIndicator={false}
+                renderItem={({item}) => {
+                  return (
+                    <View style={styles.viewConTxt}>
+                      <CheckBox
+                        style={styles.checkBoxCustom}
+                        disabled={false}
+                        boxType="circle"
+                        value={serviziSelezionati.some(
+                          servizio => servizio.id === item.id,
+                        )} //some restituisce true o false a seconda che l'elemento sia stato trovato o meno
+                        onValueChange={() => checkBoxSelection(item)}
+                      />
+                      <View>
+                        <Text style={styles.txtTitleServ}>
+                          {item.nome_servizio}
+                        </Text>
+                        <Text style={styles.txtPriceTemp}>
+                          {item.prezzo}€ - {item.durata}min
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                }}
+              />
+            </View>
+          ) : null}
+          <View style={styles.viewTouch}>
+            <TouchableOpacity
+              onPress={() => setOpenModalBeauty(!openModalBeauty)}>
+              <View>
+                <Text style={styles.txtStyle}>Beauty</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          {openModalBeauty ? (
+            <View style={styles.contFlatServizi}>
+              <FlatList
+                data={data_servizio_beauty}
+                scrollEnabled={false}
+                keyExtractor={item => item.id}
+                showsVerticalScrollIndicator={false}
+                renderItem={({item}) => {
+                  return (
+                    <View style={styles.viewConTxt}>
+                      <CheckBox
+                        style={styles.checkBoxCustom}
+                        disabled={false}
+                        boxType="circle"
+                        value={serviziSelezionati.some(
+                          servizio => servizio.id === item.id,
+                        )} //some restituisce true o false a seconda che l'elemento sia stato trovato o meno
+                        onValueChange={() => checkBoxSelection(item)}
+                      />
+                      <View>
+                        <Text style={styles.txtTitleServ}>
+                          {item.nome_servizio}
+                        </Text>
+                        <Text style={styles.txtPriceTemp}>
+                          {item.prezzo}€ - {item.durata}min
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                }}
+              />
+            </View>
+          ) : null}
+        </ScrollView>
+      </View>
+      <ButtonGeneral
+        titol={'continua'}
+        funzione={() => navigation.navigate('PrenotaAppuntamento')}
+      />
+      <BottomTabMenuCustom />
+    </>
+  );
+};
+const styles = StyleSheet.create({
+  /*------------------------------------------------------------
+    CSS CATEGORIE
+    ------------------------------------------------------------*/
+  ScrolViewCont: {
+    width: '100%',
+    height: '70%',
+    //backgroundColor:Colors.danger,
+  },
+  viewTouch: {
+    height: 50,
+    backgroundColor: Colors.white,
+    justifyContent: 'center',
+    width: '95%',
+    alignSelf: 'center',
+    marginTop: '5%',
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: Colors.hotel,
+  },
+  txtStyle: {
+    fontSize: RFValue(14),
+    fontWeight: '700',
+    color: Colors.gray,
+    marginLeft: '3%',
+  },
+  /*------------------------------------------------------------
+    CSS MODAL ELEMENTI CATEGORIA
+   ------------------------------------------------------------*/
+  viewConTxt: {
+    padding: 3,
+    flexDirection: 'row',
+    alignContent:'center',
+    alignItems:'center',
+  },
+  contFlatServizi: {
+    width: '90%',
+    alignSelf: 'center',
+    marginTop: '2%',
+  },
+  txtTitleServ: {
+    fontSize: RFValue(13),
+    fontWeight: '600',
+    color: Colors.gray,
+  },
+  txtPriceTemp: {
+    fontSize: RFValue(10),
+  },
+  checkBoxCustom: {
+    tintColor: Colors.hotel,
+    width: 20,
+    height: 20,
+    marginRight:10,
+    marginBottom:5,
+    marginTop:5,
+  },
+});
+export default SceltaServizio;
