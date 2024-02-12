@@ -1,0 +1,42 @@
+import {
+  SELEZIONE_SERVIZIO,
+  RIMUOVI_SELEZIONE_SERVIZIO,
+} from './action';
+
+const initStateAggiuntaRimozioneServizi = {
+  data_servizio: [],
+};
+
+export const aggiuntaServizioReducer = (state = initStateAggiuntaRimozioneServizi, action)=>{
+  switch(action.type){
+    case SELEZIONE_SERVIZIO.DATA_SUCCESS:
+    const {item} = action.data_servizio; //IN QUESTA MANIERA RIESCE AD ACCEDERE ALL'OGGETTO COMPLETO ALTRIEMNTI DAREBBE UNDEFINED
+        return{
+          ...state,
+          data_servizio:[...state.data_servizio, item]
+        };
+    case RIMUOVI_SELEZIONE_SERVIZIO.DATA_SUCCESS:
+      const {item: itemToRemove} = action.data_servizio;//PASSANDO L'ITEM COME OGGETTO RIESCO A LEGGERE L'OGGETTO E QUINDI ELEMENTO.ID NON è PIù UNDEFINED
+      
+
+      //Trovo l'indice dell'elemento da rimuovere
+      const indexToRemove = state.data_servizio.findIndex(
+        elemento => elemento.id === itemToRemove.id,
+      );
+
+
+      //Rimuovo l'elemento se questo è presente
+      if(indexToRemove !== -1){
+        const nuovoDataServizio = [...state.data_servizio];
+        nuovoDataServizio.splice(indexToRemove,1);
+        return{
+          ...state,
+          data_servizio:nuovoDataServizio,
+        };
+      }else{
+        return state;
+      }
+      default:
+        return state;
+  };
+};
