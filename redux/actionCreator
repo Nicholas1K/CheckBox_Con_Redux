@@ -1,0 +1,23 @@
+import {
+  SELEZIONE_SERVIZIO,
+  RIMUOVI_SELEZIONE_SERVIZIO,
+} from './action';
+
+/*-----------------------------------------------------------
+ACTIONCREATOR PER AGGIUNGERE UN SERVIZIO PER LE PRENOTAZIONI
+-----------------------------------------------------------*/
+export const aggiuntaServizioActionCreator = (item) => {
+    return {
+      type: SELEZIONE_SERVIZIO.DATA_SUCCESS,
+      data_servizio: {item},
+    };
+};
+/*-----------------------------------------------------------
+ACTIONCREATOR PER RIMUOVERE UN SERVIZIO PER LE PRENOTAZIONI
+-----------------------------------------------------------*/
+export const rimuoviServizioActionCreator = (item) => {
+    return{
+        type:RIMUOVI_SELEZIONE_SERVIZIO.DATA_SUCCESS,
+        data_servizio:{item},
+    };
+};
